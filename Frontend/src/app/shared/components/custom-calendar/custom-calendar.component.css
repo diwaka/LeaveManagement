@@ -1,0 +1,16 @@
+#calendar-body tr:first-child{
+    opacity: 0.5 !important;
+    cursor: default !important;
+    background-color: #ffbcbc !important;
+  }
+  #calendar-body tr td:first-child{
+    opacity: 0.5 !important;
+    cursor: default !important;
+    background-color: #ffbcbc !important;
+  }
+
+  tbody tr td:first-child{
+    opacity: 0.5 !important;
+    cursor: default !important;
+    background-color: #ffbcbc !important;
+  }
