@@ -14,3 +14,13 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+$router->group(['prefix' => 'Holiday'], function () use ($router) {
+     $router->get('GetHolidays[/{data}]','HolidayController@GetHolidays');
+     $router->post('Store','HolidayController@Store');
+     $router->put('Update/{id}','HolidayController@Update');
+});
+$router->group(['prefix' => 'Event'], function () use ($router) {
+    $router->get('GetEvents[/{data}]','EventController@GetEvents');
+    $router->post('Store','EventController@Store');
+    $router->put('Update/{id}','EventController@Update');
+});
