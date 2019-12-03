@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { Constants } from './app/shared/helper/constants';
-import { CustomCalendarComponent } from './app/shared/components/custom-calendar/custom-calendar.component';
+import { Constants } from './shared/helper/Constants';
+import { CustomCalendarComponent } from './shared/components/custom-calendar/custom-calendar.component';
+
+
 
 const routes: Routes = [
     {
