@@ -1,4 +1,4 @@
-#calendar-body tr:first-child{
+/* #calendar-body tr:first-child{
     opacity: 0.5 !important;
     cursor: default !important;
     background-color: #ffbcbc !important;
@@ -13,4 +13,22 @@
     opacity: 0.5 !important;
     cursor: default !important;
     background-color: #ffbcbc !important;
+  } */
+
+  .disable{
+    opacity: 0.5;
+    pointer-events: none;
+color:#979797;
   }
+
+  .enable{
+    opacity: 1;
+    pointer-events: default;
+    background: #ffffff;
+  }
+
+  .LM-padding-0{
+    padding: 0 !important;
+  }
+
+  

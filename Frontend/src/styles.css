@@ -1,1 +1,67 @@
 /* You can add global styles to this file, and also import other style files */
+body
+{
+  background: #f1f1f1 !important;
+}
+.table>thead>tr>th {
+    vertical-align: bottom;
+    border-bottom: solid 1px #f1f1f1;
+    color: #1be1ae !important;
+    padding-bottom: 10px;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+  vertical-align: middle;
+  border-top: none;
+  font-weight: 600;
+  font-size: 15px;
+  color: #5b5b5b;
+  text-align: center;
+}
+.card
+{
+  background: #fff;
+  padding: 19px 20px;
+  border-radius: 10px;
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+  border-top: none;
+}
+select.form-control{
+    border: none;
+    box-shadow: none;
+    color: #7c4dff;
+    font-size: 20px;
+    font-weight: 600;
+}
+.bg-info {
+    background-color: #1be1ae;
+    color: #fff !important;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 40px;
+}
+
+.table>tbody>tr>td{
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+}
+.date-start-point
+{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.date-end-point
+{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.date-mid-point
+{
+    background:#1be1ae;
+}
+.date-holiday
+{
+    opacity: 0.4;
+}
