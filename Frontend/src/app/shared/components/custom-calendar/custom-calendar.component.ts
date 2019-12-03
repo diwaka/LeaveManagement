@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Calendar } from '../../models/calendar.model';
-import { EnumConverter } from '../../enums/enum-converter';
+import { EnumConverter } from '../../helper/enum-converter';
 import { ActiveDayStatus } from '../../enums/active-day-status.enum';
 
 @Component({
@@ -38,7 +38,7 @@ export class CustomCalendarComponent implements OnInit {
     // this.calendar.minDate = new Date();
   }
 
-  private shortenMonthName() {
+  private shortenMonthsName() {
     this.calendarMonths.forEach(month => {
       month.label = month.label.substr(0, 3);
     })

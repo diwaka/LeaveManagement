@@ -1,4 +1,4 @@
-import { Months } from './months.enum';
+import { Months } from '../enums/months.enum';
 
 export class EnumConverter {
 

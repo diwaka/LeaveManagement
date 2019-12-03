@@ -7,6 +7,7 @@ use App\Model\Holiday;
 
 use App\Enums\Status\TypeEnum;
 use App\Enums\Status\MessageEnum;
+use App\Shared\Session;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use DB;
@@ -26,9 +27,12 @@ class HolidayController extends Controller
 
     public function GetHolidays($data = null)
     {   
-       
+      
         if (preg_match("/([0-9]{2})\-([0-9]{2})\-([0-9]{4})/", $data)) {
              return $this->GetHolidayByDate($data); 
+        }
+        else if(preg_match("/([0-9]{4})\-([0-9]{4})/", $data)){
+            return $this->GetHolidaysBySession($data);
         }
         else if($data == null) {
              return $this->GetAllHolidays();
@@ -43,7 +47,10 @@ class HolidayController extends Controller
         $official_holiday = $this->holiday->where(['isActive'=>1,'date'=>date('Y-m-d',strtotime($date))])->with('event')->first();
 
         if(isset($official_holiday)){
-            return response()->json($official_holiday,200);
+
+         $official_holiday = Session::AddConstant($official_holiday);
+        //  $official_holiday[Session::Session] = Session::GetSessionByDate($official_holiday->date);
+         return response()->json($official_holiday,200);
         }
         else{
             return response()->json(['Message' => MessageEnum::NotFound,'Type'=>TypeEnum::Danger], 404);
@@ -54,12 +61,37 @@ class HolidayController extends Controller
         $official_holiday = $this->holiday->where(['isActive'=>1])->with('event')->get();
       
         if(count($official_holiday) > 0){
+           
+           $official_holiday = Session::AddConstant($official_holiday);
 
-            return response()->json($official_holiday,200);
+           return response()->json($official_holiday,200);
         }
         else{
             return response()->json(['Message' => MessageEnum::NotFound,'Type'=>TypeEnum::Danger], 404);
         }
+    }
+    private function GetHolidaysBySession($session){
+        if (preg_match("/([0-9]{4})\-([0-9]{4})/", $session)) {
+            $session_date = Session::GetSessionDate($session);   
+        }
+        else{
+            return response()->json(['Message' => MessageEnum::InCorrectFormat,'Type'=>TypeEnum::Danger], 408);
+        }
+             
+       $official_holiday = $this->holiday->where(['isActive'=>1])
+                                           ->whereBetween('date',
+                                           [
+                                           date('Y-m-d',strtotime($session_date[Session::StartDate])),
+                                           date('Y-m-d',strtotime($session_date[Session::EndDate]))
+                                           ]
+                                           )->with('event')->get();
+
+      if(count($official_holiday) > 0){
+        return response()->json($official_holiday,200);
+      }
+      else{
+        return response()->json(['Message' => MessageEnum::NotFound,'Type'=>TypeEnum::Danger], 404);
+      }                                     
     }
 
     public function Store(Request $request)

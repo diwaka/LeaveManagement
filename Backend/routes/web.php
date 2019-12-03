@@ -24,3 +24,9 @@ $router->group(['prefix' => 'Event'], function () use ($router) {
     $router->post('Store','EventController@Store');
     $router->put('Update/{id}','EventController@Update');
 });
+$router->group(['prefix' => 'LeaveType'], function () use ($router) {
+    $router->get('GetLeaveTypes','LeaveTypeController@GetLeaveTypes');
+    $router->get('GetLeaveType/{id}','LeaveTypeController@GetLeaveType');
+    $router->post('Store','LeaveTypeController@Store');
+    $router->put('Update/{id}','LeaveTypeController@Update');
+});
