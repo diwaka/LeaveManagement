@@ -27,7 +27,7 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css",
               "src/assets/styles/default.css",
-              "node_modules/material-design-icons/iconfont/material-icons.css",
+              "node_modules/material-design-icons/iconfont/material-icons.css"
             
             ],
             "scripts": [
