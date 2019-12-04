@@ -1,5 +1,5 @@
 <div class="container col-sm-4 col-md-7 col-lg-4 mt-5">
-  <div class="card">
+  <div class="card col-xs-12">
     <!-- <h3 class="card-header" id="monthAndYear"></h3> -->
     <div class="col-xs-12 LM-padding-0">
       <span class="col-sm-1 pull-left" id="previous" (click)="previous()">
@@ -97,13 +97,14 @@
       </tbody>
     </table>
 
-
-    <form class="form-inline">
-
-
-
-
-    </form>
+    <div class="col-xs-12 LM-padding-0">
+      <i class="material-icons LM-link-danger pull-left" (click)="cancel()">
+        cancel
+      </i>
+      <i class="material-icons LM-link-success pull-right" (click)="submitDate()">
+        check_circle
+      </i>
+    </div>
   </div>
 </div>
 <!-- <select class="form-control col-sm-4" >

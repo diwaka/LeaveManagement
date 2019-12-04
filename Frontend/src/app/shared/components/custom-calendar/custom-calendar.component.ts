@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Calendar } from '../../models/calendar.model';
 import { EnumConverter } from '../../helper/enum-converter';
 import { ActiveDayStatus } from '../../enums/active-day-status.enum';
@@ -11,6 +11,7 @@ import { ActiveDayStatus } from '../../enums/active-day-status.enum';
 export class CustomCalendarComponent implements OnInit {
 
 
+  @Output() selectedDate: EventEmitter<Calendar> = new EventEmitter<Calendar>();
   public today: Date;
   public currentMonth: number;
   public currentYear: number;
@@ -34,7 +35,7 @@ export class CustomCalendarComponent implements OnInit {
     // this.shortenMonthName();
     this.calendar = new Calendar();
     this.showCalendar(this.currentMonth, this.currentYear);
-    console.log('calendar',this.calendar);
+    console.log('calendar', this.calendar);
     // this.calendar.minDate = new Date();
   }
 
@@ -46,21 +47,21 @@ export class CustomCalendarComponent implements OnInit {
 
 
   public next() {
-    console.log('cell click calendar',this.calendar);
+    console.log('cell click calendar', this.calendar);
     this.currentYear = (this.currentMonth === 11) ? this.currentYear + 1 : this.currentYear;
     this.currentMonth = (this.currentMonth + 1) % 12;
     this.showCalendar(this.currentMonth, this.currentYear);
   }
 
   public previous() {
-    console.log('cell click calendar',this.calendar);
+    console.log('cell click calendar', this.calendar);
     this.currentYear = (this.currentMonth === 0) ? this.currentYear - 1 : this.currentYear;
     this.currentMonth = (this.currentMonth === 0) ? 11 : this.currentMonth - 1;
     this.showCalendar(this.currentMonth, this.currentYear);
   }
 
   public jump() {
-    console.log('cell click calendar',this.calendar);
+    console.log('cell click calendar', this.calendar);
     this.currentYear = parseInt(this.selectYear.value);
     this.currentMonth = parseInt(this.selectMonth.value);
     this.showCalendar(this.currentMonth, this.currentYear);
@@ -110,7 +111,7 @@ export class CustomCalendarComponent implements OnInit {
           cellText = document.createTextNode(date.toString());
 
           if (date === this.today.getDate() && year === this.today.getFullYear() && month === this.today.getMonth()) {
-            cell.classList.add("bg-info");
+            cell.classList.add("todays-date");
           } // color today's date
           cell.appendChild(cellText);
           row.appendChild(cell);
@@ -203,17 +204,16 @@ export class CustomCalendarComponent implements OnInit {
 
   private selectDate(cell: any, isSelected: boolean) {
     // cell.addEventListener('click', function (e) {
-      //   isSelected = !isSelected;
-      //   if (isSelected)
-      //     e.target.classList.add("bg-info");
-      //   else
-      //     e.target.classList.remove("bg-info");
-      // });
-      
-      var _this = this;
-      cell.addEventListener('click', function (e) {
-        console.log('cell click calendar',_this.calendar);
-      let cellClickedDate = new Date(2019, 11, Number(e.target.innerText));
+    //   isSelected = !isSelected;
+    //   if (isSelected)
+    //     e.target.classList.add("bg-info");
+    //   else
+    //     e.target.classList.remove("bg-info");
+    // });
+
+    var _this = this;
+    cell.addEventListener('click', function (e) {
+      let cellClickedDate = new Date(_this.currentYear, _this.currentMonth, Number(e.target.innerText));
       if (_this.calendar.startDate == null || _this.calendar.endDate == null) {
         if (_this.calendar.startDate == null) {
           _this.calendar.startDate = cellClickedDate;
@@ -229,13 +229,24 @@ export class CustomCalendarComponent implements OnInit {
           e.target.classList.add("bg-info");
         }
       } else {
-        e.target.classList.remove("bg-info");
+        _this.removeSelectedClass();
         _this.calendar.startDate = cellClickedDate;
         _this.calendar.endDate = null;
+        e.target.classList.add("bg-info");
       }
+      console.log('start-', _this.calendar.startDate, 'end-', _this.calendar.endDate);
+
     });
 
   }
+
+  private removeSelectedClass() {
+    var elements = document.getElementsByClassName("bg-info");
+    while (elements[0]) {
+      elements[0].classList.remove("bg-info");
+    }
+  }
+
 
   private disableWeekDays(weekDay: number, dayStatus: number) {
     switch (weekDay) {
@@ -276,5 +287,64 @@ export class CustomCalendarComponent implements OnInit {
   }
   private isCellExist(elements: any, index: number) {
     return (elements && elements.length && elements[index].cells && elements[index].cells.length) ? true : false;
+  }
+
+  public submitDate() {
+    let comparedResult = this.swipeDates();
+    this.selectedDate.emit(comparedResult);
+  }
+
+  public cancel() {
+
+  }
+
+  /**
+   * Swipe start and end dates, if user has first selected a date say 25/12/19
+   * which is set as start date.
+   * Later if user selects end date say 12/12/19 which smaller than starDate,
+   * which should not be the case in real world.
+   * So swipping the smaller(endDate) with start date and endDate with bigger(startDate)
+   */
+  private swipeDates(): Calendar {
+    if (this.calendar.startDate == null)
+      this.calendar.startDate = JSON.parse(JSON.stringify(this.calendar.endDate));
+    if (this.calendar.endDate == null)
+      this.calendar.endDate = JSON.parse(JSON.stringify(this.calendar.startDate));
+
+    let comparedResult = this.compareDates(this.calendar.startDate, this.calendar.endDate);
+    if (comparedResult == 1) {
+      let startDateTemp = JSON.parse(JSON.stringify(this.calendar.startDate));
+      let endDateTemp = JSON.parse(JSON.stringify(this.calendar.endDate));
+      this.calendar.startDate = JSON.parse(JSON.stringify(endDateTemp));
+      this.calendar.endDate = JSON.parse(JSON.stringify(startDateTemp));
+    }
+    return this.calendar
+  }
+
+  /** 
+ * Compares two Date objects and returns e number value that represents 
+ * the result:
+ * 0 if the two dates are equal.
+ * 1 if the first date is greater than second.
+ * -1 if the first date is less than second.
+ * @param date1 First date object to compare.
+ * @param date2 Second date object to compare.
+ */
+  public compareDates(date1: Date, date2: Date): number {
+    // With Date object we can compare dates them using the >, <, <= or >=.
+    // The ==, !=, ===, and !== operators require to use date.getTime(),
+    // so we need to create a new instance of Date with 'new Date()'
+    let d1 = new Date(date1);
+    let d2 = new Date(date2);
+
+    // Check if the dates are equal
+    let same = d1.getTime() === d2.getTime();
+    if (same) return 0;
+
+    // Check if the first is greater than second
+    if (d1 > d2) return 1;
+
+    // Check if the first is less than second
+    if (d1 < d2) return -1;
   }
 }
