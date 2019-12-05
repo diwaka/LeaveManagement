@@ -7,19 +7,24 @@ import { CustomCalendarComponent } from './shared/components/custom-calendar/cus
 import { SiteheaderComponent } from './static/siteheader/siteheader.component';
 import { ContentareaComponent } from './static/contentarea/contentarea.component';
 import { LeaveManagementRoutingModule } from './app-routing.module';
+import { HomeComponent } from './components/home/home.component';
+import { LeaveTypeService } from './shared/services/leave-type.service';
+import {HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
     CustomCalendarComponent,
     SiteheaderComponent,
-    ContentareaComponent
+    ContentareaComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
-    LeaveManagementRoutingModule
+    LeaveManagementRoutingModule,
+   HttpClientModule
   ],
-  providers: [],
+  providers: [LeaveTypeService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
