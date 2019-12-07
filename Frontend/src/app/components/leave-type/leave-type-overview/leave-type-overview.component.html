@@ -1,0 +1,36 @@
+
+<div class="col-xs-12 card">
+<div class="col-xs-6 text-left LM-padding-0">
+    <span class="LM-heading">Leave Types</span>
+</div>
+<div class="col-xs-6 text-right LM-padding-0">
+    <button class="btn btn-sm btn-success" (click)="redirectToForm()"><span> Add Leave Types</span></button>
+</div>
+</div>
+<div class="col-xs-12 card">
+    <div class="col-xs-12 table-responsive LM-padding-0">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Short Code</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let type of leaveTypes">
+                    <td>{{type.name}}</td>
+                    <td>{{type.shortCode}}</td>
+                    <td>
+                        <button class="btn btn-xs btn-warning" (click)="redirectToForm(type.id)">
+                            <i class="material-icons">
+                                edit
+                            </i>
+                        </button>
+                    
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

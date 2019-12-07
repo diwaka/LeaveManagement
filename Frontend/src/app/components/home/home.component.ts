@@ -8,12 +8,10 @@ import { LeaveTypeService } from '../../shared/services/leave-type.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private _leaveService: LeaveTypeService) { }
+  constructor() { }
 
   ngOnInit() {
-    this._leaveService.getLeaveTypes().subscribe(result => {
-      console.log(result);
-    });
+
   }
 
 }
