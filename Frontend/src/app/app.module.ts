@@ -7,19 +7,40 @@ import { CustomCalendarComponent } from './shared/components/custom-calendar/cus
 import { SiteheaderComponent } from './static/siteheader/siteheader.component';
 import { ContentareaComponent } from './static/contentarea/contentarea.component';
 import { LeaveManagementRoutingModule } from './app-routing.module';
+import { HomeComponent } from './components/home/home.component';
+import { LeaveTypeService } from './shared/services/leave-type.service';
+import {HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ToastrModule } from 'ngx-toastr';
+import { HttpLMInterceptor } from './shared/interceptor/http-lm-interceptor';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LeaveTypeOverviewComponent } from './components/leave-type/leave-type-overview/leave-type-overview.component';
+import { LeaveTypeFormComponent } from './components/leave-type/leave-type-form/leave-type-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CustomCalendarComponent,
     SiteheaderComponent,
-    ContentareaComponent
+    ContentareaComponent,
+    HomeComponent,
+    LeaveTypeOverviewComponent,
+    LeaveTypeFormComponent,
   ],
   imports: [
     BrowserModule,
-    LeaveManagementRoutingModule
+    BrowserAnimationsModule,
+    LeaveManagementRoutingModule,
+    HttpClientModule,
+    ToastrModule.forRoot({
+      timeOut: 10000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    }),
   ],
-  providers: [],
+  providers: [LeaveTypeService,
+    {
+    provide: HTTP_INTERCEPTORS, useClass: HttpLMInterceptor, multi: true
+    }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
