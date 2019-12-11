@@ -4,8 +4,8 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 
 import { CustomCalendarComponent } from './shared/components/custom-calendar/custom-calendar.component';
-import { SiteheaderComponent } from './static/siteheader/siteheader.component';
-import { ContentareaComponent } from './static/contentarea/contentarea.component';
+import { SiteheaderComponent } from './components/static/siteheader/siteheader.component';
+import { ContentareaComponent } from './components/static/contentarea/contentarea.component';
 import { LeaveManagementRoutingModule } from './app-routing.module';
 import { HomeComponent } from './components/home/home.component';
 import { LeaveTypeService } from './shared/services/leave-type.service';
