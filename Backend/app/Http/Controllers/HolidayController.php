@@ -38,7 +38,7 @@ class HolidayController extends Controller
              return $this->GetAllHolidays();
         }
         else{
-            return response()->json(['Message' => MessageEnum::WentWrong,'Type'=>TypeEnum::Danger], 500);
+            return response()->json(['message' => MessageEnum::WentWrong,'type'=>TypeEnum::Danger], 500);
         }
     }
 
@@ -53,7 +53,7 @@ class HolidayController extends Controller
          return response()->json($official_holiday,200);
         }
         else{
-            return response()->json(['Message' => MessageEnum::NotFound,'Type'=>TypeEnum::Danger], 404);
+            return response()->json(['message' => MessageEnum::NotFound,'type'=>TypeEnum::Danger], 404);
         }
     }
     private function GetAllHolidays(){
@@ -67,7 +67,7 @@ class HolidayController extends Controller
            return response()->json($official_holiday,200);
         }
         else{
-            return response()->json(['Message' => MessageEnum::NotFound,'Type'=>TypeEnum::Danger], 404);
+            return response()->json(['message' => MessageEnum::NotFound,'type'=>TypeEnum::Danger], 404);
         }
     }
     private function GetHolidaysBySession($session){
@@ -75,7 +75,7 @@ class HolidayController extends Controller
             $session_date = Session::GetSessionDate($session);   
         }
         else{
-            return response()->json(['Message' => MessageEnum::InCorrectFormat,'Type'=>TypeEnum::Danger], 408);
+            return response()->json(['message' => MessageEnum::InCorrectFormat,'type'=>TypeEnum::Danger], 408);
         }
              
        $official_holiday = $this->holiday->where(['isActive'=>1])
@@ -90,7 +90,7 @@ class HolidayController extends Controller
         return response()->json($official_holiday,200);
       }
       else{
-        return response()->json(['Message' => MessageEnum::NotFound,'Type'=>TypeEnum::Danger], 404);
+        return response()->json(['message' => MessageEnum::NotFound,'type'=>TypeEnum::Danger], 404);
       }                                     
     }
 
@@ -103,10 +103,10 @@ class HolidayController extends Controller
         $official_holiday->updatedBy = 1;
 
         if(!$official_holiday->save()){
-            return response()->json(['Message' => MessageEnum::WentWrong,'Type'=>TypeEnum::Danger], 500);
+            return response()->json(['message' => MessageEnum::WentWrong,'type'=>TypeEnum::Danger], 500);
         }
         else{
-            return response()->json(['Message' => MessageEnum::Inserted,'Type'=>TypeEnum::Success], 201);
+            return response()->json(['message' => MessageEnum::Inserted,'type'=>TypeEnum::Success], 201);
         }
     }
 
@@ -120,11 +120,11 @@ class HolidayController extends Controller
        $official_holiday->updatedAt = date('Y-m-d H:i:s');
        
        if(!$official_holiday->save()){
-        return response()->json(['Message' => MessageEnum::WentWrong,'Type'=>TypeEnum::Danger], 500);
+        return response()->json(['message' => MessageEnum::WentWrong,'type'=>TypeEnum::Danger], 500);
        }
        else{
         //return $official_holiday;
-        return response()->json(['Message' => MessageEnum::Inserted,'Type'=>TypeEnum::Success], 201);
+        return response()->json(['message' => MessageEnum::Inserted,'type'=>TypeEnum::Success], 201);
        }
     }
    

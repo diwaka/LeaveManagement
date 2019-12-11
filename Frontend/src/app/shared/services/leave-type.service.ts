@@ -27,9 +27,9 @@ export class LeaveTypeService {
       .pipe(map((res: any) => <LeaveType>res));
   }
 
-  public storeLeaveType(leaveType: LeaveType) {
+  public storeLeavesType(leaveTypes: Array<LeaveType>) {
     return this.http
-      .post(this.leaveTypeEndPoint + "Store", leaveType)
+      .post(this.leaveTypeEndPoint + "Store", leaveTypes)
       .pipe(map((res: any) => <ServerResponse>res));
   }
   public updateLeaveType(id: number, leaveType: LeaveType) {

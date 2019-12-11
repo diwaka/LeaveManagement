@@ -19,7 +19,7 @@ export class LeaveTypeForm extends FormGroup {
         this.isActive = this.model.isActive;
 
         this.registerControl("name", this.name);
-        this.registerControl("surname", this.shortCode);
+        this.registerControl("shortCode", this.shortCode);
 
     }
 

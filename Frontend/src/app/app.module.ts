@@ -15,6 +15,7 @@ import { HttpLMInterceptor } from './shared/interceptor/http-lm-interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LeaveTypeOverviewComponent } from './components/leave-type/leave-type-overview/leave-type-overview.component';
 import { LeaveTypeFormComponent } from './components/leave-type/leave-type-form/leave-type-form.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,8 @@ import { LeaveTypeFormComponent } from './components/leave-type/leave-type-form/
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
     LeaveManagementRoutingModule,
     HttpClientModule,
     ToastrModule.forRoot({
@@ -40,7 +43,8 @@ import { LeaveTypeFormComponent } from './components/leave-type/leave-type-form/
   providers: [LeaveTypeService,
     {
     provide: HTTP_INTERCEPTORS, useClass: HttpLMInterceptor, multi: true
-    }],
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

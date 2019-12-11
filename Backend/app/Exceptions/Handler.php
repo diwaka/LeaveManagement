@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Enums\Status\TypeEnum;
+use App\Enums\Status\MessageEnum;
 
 class Handler extends ExceptionHandler
 {
@@ -46,6 +48,7 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         // return $exception;
-        return parent::render($request, $exception);
+        return response()->json(['message' => MessageEnum::WentWrong,'type'=>TypeEnum::Danger,'response'=>500], 500);
+        // return parent::render($request, $exception);
     }
 }

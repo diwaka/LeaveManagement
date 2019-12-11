@@ -31,7 +31,7 @@ class EventController extends Controller
         return response()->json($_events,200);
        }
        else{
-        return response()->json(['Message' => MessageEnum::NotFound,'Type'=>TypeEnum::Danger], 404);
+        return response()->json(['message' => MessageEnum::NotFound,'type'=>TypeEnum::Danger], 404);
        }
     
     }
@@ -43,10 +43,10 @@ class EventController extends Controller
         $_events->name = $request->input('name');
 
         if(!$_events->save()){
-            return response()->json(['Message' => MessageEnum::WentWrong,'Type'=>TypeEnum::Danger], 500);
+            return response()->json(['message' => MessageEnum::WentWrong,'type'=>TypeEnum::Danger], 500);
         }
         else{
-            return response()->json(['Message' => MessageEnum::Inserted,'Type'=>TypeEnum::Success], 201);
+            return response()->json(['message' => MessageEnum::Inserted,'Type'=>TypeEnum::Success], 201);
         }
     }
 
@@ -56,10 +56,10 @@ class EventController extends Controller
        $_events->name = $request->input('name');
 
        if(!$_events->save()){
-        return response()->json(['Message' => MessageEnum::WentWrong,'Type'=>TypeEnum::Danger], 500);
+        return response()->json(['message' => MessageEnum::WentWrong,'type'=>TypeEnum::Danger], 500);
        }
        else{
-        return response()->json(['Message' => MessageEnum::Inserted,'Type'=>TypeEnum::Success], 201);
+        return response()->json(['message' => MessageEnum::Inserted,'type'=>TypeEnum::Success], 201);
        }
     }
    

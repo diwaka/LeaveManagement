@@ -9,6 +9,7 @@ use App\Enums\Status\MessageEnum;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Support\Collection;
 class LeaveTypeController extends Controller
 {
 
@@ -31,7 +32,7 @@ class LeaveTypeController extends Controller
         return response()->json($_leaveType,200);
        }
        else{
-        return response()->json(['Message' => MessageEnum::NotFound,'Type'=>TypeEnum::Danger], 404);
+        return response()->json(['message' => MessageEnum::NotFound,'type'=>TypeEnum::Danger,'response'=>404], 404);
        }
     
     }
@@ -44,22 +45,19 @@ class LeaveTypeController extends Controller
         return response()->json($_leaveType,200);
        }
        else{
-        return response()->json(['Message' => MessageEnum::NotFound,'Type'=>TypeEnum::Danger], 404);
+        return response()->json(['message' => MessageEnum::NotFound,'type'=>TypeEnum::Danger,'response'=>404], 404);
        }
     
     }
 
     public function Store(Request $request)
     {
-        $_leaveType = new LeaveType(); 
-        $_leaveType->name = $request->input('name');
-        $_leaveType->shortCode = $request->input('shortCode');
 
-        if(!$_leaveType->save()){
-            return response()->json(['Message' => MessageEnum::WentWrong,'Type'=>TypeEnum::Danger], 500);
+        if(!LeaveType::insert($request->all())){
+            return response()->json(['message' => MessageEnum::WentWrong,'type'=>TypeEnum::Danger,'response'=>500], 500);
         }
         else{
-            return response()->json(['Message' => MessageEnum::Inserted,'Type'=>TypeEnum::Success], 201);
+            return response()->json(['message' => MessageEnum::Inserted,'type'=>TypeEnum::Success,'response'=>201], 201);
         }
     }
 
@@ -67,13 +65,13 @@ class LeaveTypeController extends Controller
     {
        $_leaveType = $this->leaveType->find($id);
        $_leaveType->name = $request->input('name');
-        $_leaveType->shortCode = $request->input('shortCode');
+       $_leaveType->shortCode = $request->input('shortCode');
 
        if(!$_leaveType->save()){
-        return response()->json(['Message' => MessageEnum::WentWrong,'Type'=>TypeEnum::Danger], 500);
+        return response()->json(['message' => MessageEnum::WentWrong,'type'=>TypeEnum::Danger,'response'=>500], 500);
        }
        else{
-        return response()->json(['Message' => MessageEnum::Inserted,'Type'=>TypeEnum::Success], 201);
+        return response()->json(['message' => MessageEnum::Inserted,'type'=>TypeEnum::Success,'response'=>201], 201);
        }
     }
    
