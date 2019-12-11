@@ -19,13 +19,13 @@ export class Calendar {
     placement: "top" | "bottom" | "left" | "right";
     selectedDates: EventDate[];
     isMultipleAllow: boolean;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
 }
 
 export class EventDate {
     title: string;
-    selectedDate: Date;
+    selectedDate: string;
     backgroundColor: string;
     eventType: EventType;
 }

@@ -2,7 +2,9 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Calendar } from '../../models/calendar.model';
 import { EnumConverter } from '../../helper/enum-converter';
 import { ActiveDayStatus } from '../../enums/active-day-status.enum';
-
+var moment = require('moment');
+declare var require: any
+require('twix');
 @Component({
   selector: 'app-custom-calendar',
   templateUrl: './custom-calendar.component.html',
@@ -11,7 +13,7 @@ import { ActiveDayStatus } from '../../enums/active-day-status.enum';
 export class CustomCalendarComponent implements OnInit {
 
 
-  @Output() selectedDate: EventEmitter<Calendar> = new EventEmitter<Calendar>();
+  @Output() selectedDateOutput: EventEmitter<Calendar> = new EventEmitter<Calendar>();
   public today: Date;
   public currentMonth: number;
   public currentYear: number;
@@ -21,9 +23,13 @@ export class CustomCalendarComponent implements OnInit {
   // public monthAndYear: any;
   public calendarMonths: any[];
   public calendar: Calendar;
-  constructor() { }
+  public medianDates: any[];
+  public weekDays: any[];
+  constructor(
+  ) { }
 
   ngOnInit() {
+    this.weekDays = [];
     this.today = new Date();
     this.currentMonth = this.today.getMonth();
     this.currentYear = this.today.getFullYear();
@@ -35,7 +41,7 @@ export class CustomCalendarComponent implements OnInit {
     // this.shortenMonthName();
     this.calendar = new Calendar();
     this.showCalendar(this.currentMonth, this.currentYear);
-    console.log('calendar', this.calendar);
+
     // this.calendar.minDate = new Date();
   }
 
@@ -47,21 +53,18 @@ export class CustomCalendarComponent implements OnInit {
 
 
   public next() {
-    console.log('cell click calendar', this.calendar);
     this.currentYear = (this.currentMonth === 11) ? this.currentYear + 1 : this.currentYear;
     this.currentMonth = (this.currentMonth + 1) % 12;
     this.showCalendar(this.currentMonth, this.currentYear);
   }
 
   public previous() {
-    console.log('cell click calendar', this.calendar);
     this.currentYear = (this.currentMonth === 0) ? this.currentYear - 1 : this.currentYear;
     this.currentMonth = (this.currentMonth === 0) ? 11 : this.currentMonth - 1;
     this.showCalendar(this.currentMonth, this.currentYear);
   }
 
   public jump() {
-    console.log('cell click calendar', this.calendar);
     this.currentYear = parseInt(this.selectYear.value);
     this.currentMonth = parseInt(this.selectMonth.value);
     this.showCalendar(this.currentMonth, this.currentYear);
@@ -103,20 +106,15 @@ export class CustomCalendarComponent implements OnInit {
         }
 
         else {
-
-
-          let isSelected: boolean = false;
           cell = document.createElement("td");
-
           cellText = document.createTextNode(date.toString());
-
           if (date === this.today.getDate() && year === this.today.getFullYear() && month === this.today.getMonth()) {
             cell.classList.add("todays-date");
           } // color today's date
           cell.appendChild(cellText);
           row.appendChild(cell);
           date++;
-          this.selectDate(cell, isSelected);
+          this.selectDate(cell);
         }
 
       }
@@ -202,44 +200,50 @@ export class CustomCalendarComponent implements OnInit {
     }
   }
 
-  private selectDate(cell: any, isSelected: boolean) {
-    // cell.addEventListener('click', function (e) {
-    //   isSelected = !isSelected;
-    //   if (isSelected)
-    //     e.target.classList.add("bg-info");
-    //   else
-    //     e.target.classList.remove("bg-info");
-    // });
-
+  /**
+   * On calendar the first click sets start date
+   * second set the end date
+   * if there is a third click which means, start and end date is already set
+   * so, applying a check for this 3rd click, either date should null to be set.
+   * If both are not null it goes to else, removes the bg-info class and sets for 3rd click date
+   * therefore on 3rd click, the 3rd clicked date will be set as start date and end date is set as null
+   *  if the 3rd click check satisfies, then it checks and sets start date if found null
+   * else if start date isn't null and end date is null, then end date is set.
+   * @param cell td for which a click event is created 
+   */
+  private selectDate(cell: any) {
     var _this = this;
     cell.addEventListener('click', function (e) {
       let cellClickedDate = new Date(_this.currentYear, _this.currentMonth, Number(e.target.innerText));
+      //If both dates are filled then we dont further need to set, 3rd click check
       if (_this.calendar.startDate == null || _this.calendar.endDate == null) {
         if (_this.calendar.startDate == null) {
-          _this.calendar.startDate = cellClickedDate;
+          _this.calendar.startDate = _this.formatSelectedDate(cellClickedDate);
           e.target.classList.add("bg-info");
         }
         else if (_this.calendar.startDate != null && _this.calendar.endDate == null) {
-          _this.calendar.endDate = cellClickedDate;
+          _this.calendar.endDate = _this.formatSelectedDate(cellClickedDate);
           e.target.classList.add("bg-info");
         }
         else if (_this.calendar.endDate > _this.calendar.startDate) {
-          _this.calendar.startDate = cellClickedDate;
+          _this.calendar.startDate = _this.formatSelectedDate(cellClickedDate);
           _this.calendar.endDate = null
           e.target.classList.add("bg-info");
         }
       } else {
+        // remove the existing selected classes, further applying it other selected date
         _this.removeSelectedClass();
-        _this.calendar.startDate = cellClickedDate;
+        _this.calendar.startDate = _this.formatSelectedDate(cellClickedDate);
         _this.calendar.endDate = null;
         e.target.classList.add("bg-info");
       }
-      console.log('start-', _this.calendar.startDate, 'end-', _this.calendar.endDate);
-
     });
 
   }
 
+  /**
+   * Remove class from all the element
+   */
   private removeSelectedClass() {
     var elements = document.getElementsByClassName("bg-info");
     while (elements[0]) {
@@ -247,7 +251,15 @@ export class CustomCalendarComponent implements OnInit {
     }
   }
 
-
+  /**
+   * To disable weekdays,
+   * for eg: if weekDay is 6(Sat) and dayStatus is 1(Even) ActiveDayStatus enum value
+   * Then all the Saturday in even days will be disabled.
+   * NOTE: Sundays are disabled, as this method is invoked already by default with
+   * weekDay 0 and dayStatus 0(All)
+   * @param weekDay week number 0-6(Sun-Sat) respectively
+   * @param dayStatus Days which needs to be active, Even, Odd or All.
+   */
   private disableWeekDays(weekDay: number, dayStatus: number) {
     switch (weekDay) {
       case 0: this.disableDays(0, dayStatus);
@@ -267,20 +279,33 @@ export class CustomCalendarComponent implements OnInit {
     }
   }
 
+  /**
+   * setAttribute to apply a style which disables a date
+   * All the date are in table's td,
+   * and 0 index td in tr is Sunday, therefore last index is Sat and so on.
+   * So, fetching the a tr and iterating it.
+   * for eg: if weekDay is 0 and dayStatus is 0, then
+   * element(tr) with iterable index i has cells(td) and here we pass weekDay, thus cells[0] is sunday
+   * and also it should satisfy whether index the dayStatus, 
+   * Even(2) index should be even
+   * Odd(1) index should be odd
+   * All(0) index setting attribute to all cells(td)
+   * "style", "opacity: 0.4 !important; pointer-events: none;color:#979797;"
+   */
   private disableDays(weekDay: number, dayStatus: number) {
     var elements = document.getElementsByTagName("tr");
     for (var i = 1; i < elements.length; i++) {
       if (i % 2 == 0 && dayStatus == ActiveDayStatus.Even) {
         if (this.isCellExist(elements, i))
-          elements[i].cells[weekDay].setAttribute("style", "opacity: 0.4 !important; pointer-events: none;color:#979797;");
+          elements[i].cells[weekDay].setAttribute("class", "disable");
       }
       else if (i % 2 != 0 && dayStatus == ActiveDayStatus.Odd) {
         if (this.isCellExist(elements, i))
-          elements[i].cells[weekDay].setAttribute("style", "opacity: 0.4 !important; pointer-events: none;color:#979797;");
+          elements[i].cells[weekDay].setAttribute("class", "disable");
       }
       else if (dayStatus == ActiveDayStatus.All) {
         if (this.isCellExist(elements, i))
-          elements[i].cells[weekDay].setAttribute("style", "opacity: 0.4 !important; pointer-events: none;color:#979797;");
+          elements[i].cells[weekDay].setAttribute("class", "disable");
       }
     }
 
@@ -290,12 +315,19 @@ export class CustomCalendarComponent implements OnInit {
   }
 
   public submitDate() {
-    let comparedResult = this.swipeDates();
-    this.selectedDate.emit(comparedResult);
+    let comparedResult: Calendar = this.swipeDates();
+    this.getDisabledDates();
+    this.getDatesRange();
+    comparedResult.selectedDates = JSON.parse(JSON.stringify(this.getSelectedDates()));
+    this.selectedDateOutput.emit(comparedResult);
   }
 
   public cancel() {
-
+    this.calendar.startDate = null;
+    this.calendar.endDate = null;
+    this.calendar.selectedDates = [];
+    this.showCalendar(this.currentMonth, this.currentYear);
+    this.selectedDateOutput.emit(this.calendar);
   }
 
   /**
@@ -311,7 +343,7 @@ export class CustomCalendarComponent implements OnInit {
     if (this.calendar.endDate == null)
       this.calendar.endDate = JSON.parse(JSON.stringify(this.calendar.startDate));
 
-    let comparedResult = this.compareDates(this.calendar.startDate, this.calendar.endDate);
+    let comparedResult = this.compareDates(new Date(this.calendar.startDate), new Date(this.calendar.endDate));
     if (comparedResult == 1) {
       let startDateTemp = JSON.parse(JSON.stringify(this.calendar.startDate));
       let endDateTemp = JSON.parse(JSON.stringify(this.calendar.endDate));
@@ -347,4 +379,102 @@ export class CustomCalendarComponent implements OnInit {
     // Check if the first is less than second
     if (d1 < d2) return -1;
   }
+
+  private formatSelectedDate(selectedDate: any, targetFormat: string = "DD-MM-YYYY"): any {
+    // const locale = 'en-IN';
+    let formattedDate = null;
+    const dateFormat = "DD-MM-YYYY";
+    if (typeof selectedDate === 'string' || selectedDate instanceof String)
+      formattedDate = moment(selectedDate, dateFormat).format(targetFormat);
+    else
+      formattedDate = moment(selectedDate).format(targetFormat);
+    return formattedDate;
+  }
+
+  /**
+   * Gets ranges btw start and end date
+   */
+  private getDatesRange() {
+    let startDate = new Date(this.formatSelectedDate(this.calendar.startDate, "MM-DD-YYYY"));
+    let endDate = new Date(this.formatSelectedDate(this.calendar.endDate, "MM-DD-YYYY"));
+    var itr = moment.twix(startDate, endDate).iterate("days");
+    this.medianDates = [];
+    while (itr.hasNext()) {
+      this.medianDates.push(itr.next().toDate())
+    }
+
+    let formattedDate = [];
+    this.medianDates.forEach(x => {
+      formattedDate.push(this.formatSelectedDate(x));
+    });
+
+    //push all the formatted dates
+    this.medianDates = [];
+    this.medianDates.push(...formattedDate);
+  }
+
+  /**
+   * ValidDate array only contains those dates which not in  disabled dates
+   */
+  private getSelectedDates(): any[] {
+    let validDates = [];
+    this.medianDates.forEach(x => {
+      let isIncluded = this.weekDays.includes(x);
+      if (!isIncluded)
+        validDates.push(x);
+    });
+
+    return validDates;
+  }
+
+  /**
+   * Gets the disabled dates
+   * Sundays, and even saturday
+   * If month and year is same then get disabled dates based on startdate only, of sunday (0) and saturday(6)
+   * if not than need to get disabled dates of start date and end dates as well, of sunday (0) and saturday(6)
+   * TODO: 
+   * need to have a variable which will decide to have odd, even, all or neither saturdays as off
+   * need to pass weekDay in getWeekDays as array, which will save invoking the method multiple times
+   */
+  private getDisabledDates() {
+    this.weekDays = [];
+    let isMonthSame = moment(this.calendar.startDate, 'DD-MM-YYYY').isSame(moment(this.calendar.endDate, 'DD-MM-YYYY'), 'month');
+    let isYearSame = moment(this.calendar.startDate, 'DD-MM-YYYY').isSame(moment(this.calendar.endDate, 'DD-MM-YYYY'), 'year');
+    if (isMonthSame && isYearSame) {
+      this.getWeekDays(this.calendar.startDate, ActiveDayStatus.All, 0);
+      this.getWeekDays(this.calendar.startDate, ActiveDayStatus.Even, 6);
+    }
+    else {
+      this.getWeekDays(this.calendar.startDate, ActiveDayStatus.All, 0);
+      this.getWeekDays(this.calendar.startDate, ActiveDayStatus.Even, 6);
+      this.getWeekDays(this.calendar.endDate, ActiveDayStatus.All, 0);
+      this.getWeekDays(this.calendar.endDate, ActiveDayStatus.Even, 6);
+    }
+  }
+
+
+  /**
+   * Refactor disable week days with this method.
+   */
+  private getWeekDays(selectDate: any, activeDays: number, day: number, format: string = "DD-MM-YYYY") {
+    var weekDay = moment(selectDate, format).startOf('month').day(day);
+    var counter: number = 1;
+    if (weekDay.date() > 7) weekDay.add(7, 'd');
+    var month = weekDay.month();
+
+    while (month === weekDay.month()) {
+      if ((activeDays == ActiveDayStatus.Even) && counter % 2 == 0)
+        this.weekDays.push(this.formatSelectedDate(weekDay));
+      else if ((activeDays == ActiveDayStatus.Odd) && counter % 2 != 0)
+        this.weekDays.push(this.formatSelectedDate(weekDay));
+      else if (activeDays == ActiveDayStatus.All)
+        this.weekDays.push(this.formatSelectedDate(weekDay));
+
+      weekDay.add(7, 'd');
+      counter = counter + 1;
+    }
+    console.log('weekdays', this.weekDays);
+
+  }
+
 }

@@ -74,21 +74,21 @@ select.form-control{
   line-height: 40px;
 }
 
-.LM-link-success{
+.calendar-link-success{
   cursor: pointer;
   color: #5cb85c;
-  font-size: 35px;
+  font-size: 35px !important;
 }
-.LM-link-success:hover{
+.calendar-link-success:hover{
 color: #449d44;
 }
 
-.LM-link-danger{
+.calendar-link-danger{
   cursor: pointer;
   color: #d9534f;
-  font-size: 35px;
+  font-size: 35px  !important;
 }
-.LM-link-danger:hover{
+.calendar-link-danger:hover{
 color: #c9302c;
 }
 */
